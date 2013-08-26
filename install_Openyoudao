@@ -1,0 +1,94 @@
+
+ 在windows下有很多不错的查字字典，像有道、爱词霸、灵格斯等。灵格斯提供离线字典，但跟其他程序兼容性不太好；有道的离线词典功能比较弱，总的而言，各有千秋。
+
+而在Linux平台下，也有不少，但真正稳定而功能强大的却是屈指可数。推广的比较好的要星级译王，口碑不错，词库也很全，但是好久都没有更新维护了。
+
+penyoudao是Linux一款基于gtk2和python的开源查字软件，目前Alpha阶段，该程序特点：查词快、取词方便，平台兼容性好（这一切都归功于软件的底层是Python）
+
+
+
+!!!!Openyoudao图文安装使用教程: http://hi.baidu.com/just_zx/blog/item/3c6920b3db2e74d530add1f9.html 
+
+
+
+-----------------------------------------------------------------------------------------------------------
+
+
+
+
+项目地址: https://github.com/justzx2011/openyoudao
+项目主页：http://openyoudao.org/
+演示地址v0.0: http://v.youku.com/v_show/id_XNDAzMDUxNDk2.html
+演示地址Alpha: http://v.youku.com/v_show/id_XNDIyMzM0ODI4.html
+
+1  从github上clone程序到本地目录(目录可以自己任选):
+下载程序
+git clone https://github.com/justzx2011/openyoudao                                  
+
+
+2  安装运行程序所依赖的工具以及库文件,在debian-sid下需要安装的库文件包括：
+python-xlib python-webkit python-lxml  python-beautifulsoup xclip inotify-tools curl
+其他发行版linux稍有不同，可根据具体情况安装。
+
+3  安装bin文件，方便程序执行： 
+    将bin文件：scripts/openyoudao安装到目录/usr/bin/openyoudao: 
+    #cp scripts/openyoudao /usr/bin/.
+    设置权限：
+    #chmod 755 /usr/bin/openyoudao
+4  安装libs文件： 
+    #mkdir /usr/lib/openyoudao
+    #cp ./*.py  /usr/lib/openyoudao
+    #chmod 644 /usr/lib/openyoudao/*.py
+5  安装cache文件：
+    #mkdir /var/cache/openyoudao
+    #cp -rf cache/*  /var/cache/openyoudao/.
+    #chmod 777 /var/cache/openyoudao/*.html 
+    #chmod 777 /var/cache/openyoudao/history.cache
+6 安装desktop
+    #cp desktop/openyoudao.desktop /usr/share/applications/
+    #chmod 644 /usr/share/applications/openyoudao.desktop
+  哈哈～现在应该看到openyoudao的图标了吧～
+  点击图标就能运行程序了
+
+7  程序功能演示： 
+<1> 终端取词
+a  点击程序图标运行程序，将程序设置为“常居顶端”，用鼠标抹黑要翻译的词语。
+终端取词
+                                       图2、终端取词
+组么样，快吧。是不是有种点哪里哪灵的感觉呢？哈哈～以后查看man文档，
+再也不用发愁了～
+
+b 用鼠标轻轻划过侧边栏，点击icb选项,可以切换致icb，反之依然～ 
+切换致icb           
+                                       图3、切换致icb
+icb界面  
+                                       图4、icb界面
+其实，每次我都会让本窗口 always on the top 
+<2> 网页取词 
+icb网页取词
+                                       图5、icb网页取词
+  youdao网页取词
+                                       图6、youdao网页取词
+<3> pdf取词 
+youdao pdf取词    
+                                       图7、youdao pdf取词
+  icb pdf取词
+                                       图8、icb pdf取词
+8 提示：代理设置
+如果您工作环境需要通过代理上网，可以手动修改代理设置，编辑文件 /usr/lib/openyoudao/youdao.py
+注释改行：
+os.system("curl -s -o \'" + gl.origindir +"\' \'" + url+ "\'")      #获得网页(非代理)
+取消该行注释：
+os.system("curl -s -o --socks5-hostname ip:port \'" + gl.origindir +"\' \'" + url+ "\'") #代理
+9  项目相关： 
+项目地址: https://github.com/justzx2011/openyoudao
+项目主页：http://openyoudao.org/
+演示地址v0.0: http://v.youku.com/v_show/id_XNDAzMDUxNDk2.html
+演示地址Alpha: http://v.youku.com/v_show/id_XNDIyMzM0ODI4.html
+Twitter：@openyoudao  @justzx  @lvzongting 
+作者邮箱： @justzx           justzx2011@gmail.com      
+                 @lvzongting      lvzongting@gmail.com
+邮件列表：xidian_linux@googlegroups.com
+
+
+
