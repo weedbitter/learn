@@ -1,0 +1,2 @@
+# 每天进行备份
+#30 18  *   *   *     . $HOME/workspace/ztools/etc/profile.mak; . $HOME/sqllib/db2profile; $ZTOOLS_HOME/bin/datExIn.sh export >> $ZTOOLS_HOME/log/export.log  2>&1

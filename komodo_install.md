@@ -1,7 +1,9 @@
-汉化+key 
+1.解压komodo
 
-汉化包下载：
-http://www.kevinick.com/attachment.php?id=229
+2.将ActiveState文件copy到.ActiveState文件下
 
-keygen下载：
-http://www.kevinick.com/attachment.php?id=231
+3.配置环境变量 或 创建启动文件
+
+
+
+
