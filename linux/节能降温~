@@ -1,0 +1,119 @@
+
+
+查看你的系统是否有/sys/kernel/debug/vgaswitcheroo/switch这个文件，如果有，在/etc/rc.local中添加下面两句：
+
+echo IGD > /sys/kernel/debug/vgaswitcheroo/switch
+echo OFF > /sys/kernel/debug/vgaswitcheroo/switch
+
+这样就可以在开机的时候关闭独显，仅仅使用集显。
+
+
+查看是否关闭独显
+
+使用如下命令：
+
+sudo -s
+cat /sys/kernel/debug/vgaswitcheroo/switch
+
+如果显示如下：
+
+0:IGD:+:Pwr:0000:00:02.0
+1:DIS: :Off:0000:01:00.0
+
+证明独显关闭成功。
+
+
+http://www.2cto.com/os/201212/175873.html
+
+
+笔记本装ubuntu后你会发现耗电和发热会非常严重,如果使用电池的话续航时间会非常的短几乎是windows系统下的一半时间，这是ubuntu系统电源管理的不足，但是使用linux系统就要发挥折腾的精神，于是本人查找了相关资料和别人的方法，下面做个总结，我尽可能写的详细和明白。
+www.2cto.com
+第一，关闭独立显卡（只讲N卡），并进行集成显卡设置及亮度调节，独立显卡发热和耗电都很严重。
+1.安装bumblebee
+1）打开终端（别说这个你不会），依次执行下面的代码即可完成安装：
+代码:
+sudo add-apt-repository ppa:bumblebee/stable
+sudo apt-get update
+sudo apt-get install bumblebee bumblebee-nvidia
+sudo reboot
+最后一步是重启（应该知道的吧）
+2）然后执行代码
+lspci |grep VGA
+注意，下面列出了Intel集显和NVIDIA独显的工作情况，NVIDIA显卡信息后面有个“rev ff”，表示独显已经关闭。
+ 
+再输入：
+sudo optirun glxgears
+这是会跳出一个名为“glxgears”，显示3D齿轮画面的窗口，不要关闭窗口。
+打开另一个终端，输入：
+lspci |grep -i vga
+下面又列出Intel集显和NVIDIA独显的工作情况，NVIDIA显卡信息后面显示“rev+数字”的形式，表示独显已经开启，正在工作。
+然后，把那个名为“glxgears”，显示3D齿轮画面的窗口关掉，再输入：
+lspci |grep -i vga
+下面又列出Intel集显和NVIDIA独显的工作情况，NVIDIA显卡信息后面又变回“rev ff”的形式了，表示独显已经关闭了。
+ 
+集成显卡设置及亮度调节
+设置gamma值和亮度（默认只用Fn键是不能调节亮度的）
+代码：
+xgamma -gamma .7
+表示将gamma值设置为0.7
+设置亮度，用Fn是不能调节的。因为fn调节的是/sys/class/backlight/acpi_video0/brightness文件，而I卡的文件是/sys/class/backlight/intel_backlight/brightness。
+依次执行（仍然在终端中）：
+sudo su
+echo 500 > /sys/class/backlight/intel_backlight/brightness
+ 
+OK；到此就可以用fn键设置亮度了，并且成功关闭了N卡
+ 
+下面我们来开启Intel HD 3000集成显卡的自动调节功能
+依然是终端：
+sudo gedit /etc/default/grub
+找到GRUB_CMDLINE_LINUX_DEFAULT="quiet splash",在quiet splash空格添加pcie_aspm=force i915.semaphores=1 acpi_osi=Linux acpi_backlight=vendor elevator=noop i915.i915_enable_rc6=1 i915.i915_enable_fbc=1 i915.lvds_downclock=1
+然后点保存并关闭编辑器
+执行：
+sudo update-grub
+然后再重启一次
+www.2cto.com
+第二，硬盘节能，这个比较简单，只需安装 laptop-mode-tools
+打开终端，执行：
+sudo apt-get install laptop-mode-tools
+就可以完成安装
+ 
+这个工具可以调节硬盘转速，默认使用AC电源时最高性能（转速最快），使用电池时则相反。
+通过配置问家还可以进行一些高级设置，这个大家自行查找相关资料
+ 
+执行：
+cat /proc/sys/vm/laptop_mode
+如果使用AC电源则返回值为0，使用电池则返回其他值，说明开启成功。
+参考：Laptop Mode Tools (简体中文)
+ 
+后续再添加CPU的。。。。
+ 
+第三，CPU节能设置，CPU频率动态管理。
+注：只支持那些频率可调的CPU，比如intel的I系列CPU，一般笔记本的处理器为了节能都是可调的。
+这里主要推荐两个工具，一个是耳熟能详的Jupiter，另一个是Cpufreqd
+根据查找相关资料，推荐使用Cpufreqd。
+首先安装Cpufreqd
+ 
+打开终端，依次执行：
+sudo add-apt-repository ppa:artfwo/ppa
+sudo apt-get update
+sudo apt-get install cpufreqd indicator-cpufreq
+（现在的12.04.1版本好像自带Cpufreqd，所以只需要安装indicator-cpufreq）
+ 
+后面的indicator-cpufreq是个控制面板的小插件可以方便设置。
+然后我们就可以看到右上角多了这个图标，单击即可进行相关选项的调节
+
+
+ 
+powersave，是无论如何都只会保持最低频率的所谓“省电”模式；
+ondemand，默认模式。一有cpu计算量的任务，就会立即达到最大频率运行，等执行完毕就立即回到最低频率；
+conservative，翻译成保守（中庸）模式，会自动在频率上下限调整，和ondemand的区别在于它会按需分配频率，而不是一味追求最高频率；
+performance，顾名思义只注重效率，无论如何一直保持以最大频率运行。
+www.2cto.com
+PS：不推荐安装多个CPU管理工具，可能会引起冲突，前面安装的硬盘调节工具也是具有CPU调节的功能的，所以要禁用掉,方法如下：
+打开终端，执行:
+sudo gedit /etc/laptop-mode/conf.d/cpufreq.conf
+把里面CONTROL_CPU_FREQUENCY=设置为"0"即可，即关闭调节。
+
+
+
+
