@@ -1,0 +1,29 @@
+网络 - （以太网和WIFI无线）
+ifconfig eth0 显示一个以太网卡的配置
+ifup eth0 启用一个 'eth0' 网络设备
+ifdown eth0 禁用一个 'eth0' 网络设备
+ifconfig eth0 192.168.1.1 netmask 255.255.255.0 控制IP地址
+ifconfig eth0 promisc 设置 'eth0' 成混杂模式以嗅探数据包 (sniffing)
+dhclient eth0 以dhcp模式启用 'eth0'
+route -n show routing table
+route add -net 0/0 gw IP_Gateway configura default gateway
+route add -net 192.168.0.0 netmask 255.255.0.0 gw 192.168.1.1 configure static route to reach network '192.168.0.0/16'
+route del 0/0 gw IP_gateway remove static route
+echo "1" > /proc/sys/net/ipv4/ip_forward activate ip routing
+hostname show hostname of system
+host www.example.com lookup hostname to resolve name to ip address and viceversa(1)
+nslookup www.example.com lookup hostname to resolve name to ip address and viceversa(2)
+ip link show show link status of all interfaces
+mii-tool eth0 show link status of 'eth0'
+ethtool eth0 show statistics of network card 'eth0'
+netstat -tup show all active network connections and their PID
+netstat -tupl show all network services listening on the system and their PID
+tcpdump tcp port 80 show all HTTP traffic
+iwlist scan show wireless networks
+iwconfig eth1 show configuration of a wireless network card
+hostname show hostname
+host www.example.com lookup hostname to resolve name to ip address and viceversa
+nslookup www.example.com lookup hostname to resolve name to ip address and viceversa
+whois www.example.com lookup on Whois database
+
+

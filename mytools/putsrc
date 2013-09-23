@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Net::FTP;
+use IO::File;
+use DateTime;
+use File::Path qw/mkpath/;
+use IO::Dir;
+use Getopt::Long;
+use Zeta::Log;
+
+#-----------------------------------------------------------------------------------------------------------
+#功能：把测试数据0068.src转换成zx-0068-20130609.dat,ok.zx-0068-20130609，同时上传到 ftp：canna ：testload
+#
+#用法：把本脚本放到{zixappHOME}/tdata/load/文件夹下，
+#         执行 如下命令：    ./putsrc -f 0068 -t zx -d 201309609
+#
+#         0068，zx，20130609换成要上传项目数据。
+#-----------------------------------------------------------------------------------------------------------
+
+my $ftp_up_host = "canna";
+my $ftp_up_usr  = 'testload';
+my $ftp_up_pwd  = 'testload';
+
+
+#
+# ./putsrc -f 0068 -t epos -d 20130906
+#
+# 读待处理文件命名日期
+my $date;
+my $file;
+my $type;
+my $rtn = GetOptions(
+    "file|f=s" => \$file,
+    "date|d=i" => \$date,
+    "type|t=s" => \$type,
+) or die "can not GetOptions";
+
+unless($file && $file =~ /^\d{4}$/) {
+    &usage;
+}
+unless($date && $date =~ /^\d{8}$/) {
+    &usage;
+}
+unless($type) {
+    &usage;
+}
+
+
+#  日志
+my $log = Zeta::Log->new(
+    logurl   => 'stderr',
+    loglevel => 'DEBUG',
+);
+# 本地文件路径
+my $local_up_path = './testload/'.$date;
+#my $local_up_path = '/home/ngy/workspace/zixapp/tdata/load/testload/'.$date;
+
+# 上传文件 
+my $ftp_up_path = "./$date";
+my $up_file = "$type-$file-$date.dat";
+my $ok_file = "ok.$type-$file-$date";
+
+#生成上传文件
+mkpath ($local_up_path, 0711);
+system("cp $file.src $local_up_path/$up_file"); 
+system("touch $local_up_path/$ok_file"); 
+
+
+
+# 转到数据所在目录
+chdir $local_up_path            or die "Cannot change local dir";
+$log->debug("本地路径切换:$local_up_path\n");
+
+
+my $ftp = Net::FTP->new("$ftp_up_host", Debug => 0)     or die "Cannot connect to some.host.name: $@";
+$ftp->login("$ftp_up_usr", "$ftp_up_pwd")               or die "Cannot login";
+$log->debug( "login");
+$ftp->mkdir("$ftp_up_path"); 
+$ftp->cwd("$ftp_up_path")                               or die "Cannot change work dir", $ftp->message;
+$log->debug("chdir"); 
+
+$ftp->put("$up_file")                      or die "put failed ", $ftp->message;
+$log->info("put:$up_file");
+$ftp->put("$ok_file")                          or die "put failed ", $ftp->message;
+$log->info("put:$ok_file");
+
+$ftp->quit;
+
+sub usage{
+    die "请按要求格式输入： 如： ./putsrc -f 0068 -t epos -d 20130906                 \n";
+}

@@ -1,0 +1,32 @@
+文件的权限 - 使用 "+" 设置权限，使用 "-" 用于取消
+ls -lh 显示权限
+ls /tmp | pr -T5 -W$COLUMNS 将终端划分成5栏显示
+chmod ugo+rwx directory1 设置目录的所有人(u)、群组(g)以及其他人(o)以读（r ）、写(w)和执行(x)的权限
+chmod go-rwx directory1 删除群组(g)与其他人(o)对目录的读写执行权限
+chown user1 file1 改变一个文件的所有人属性
+chown -R user1 directory1 改变一个目录的所有人属性并同时改变改目录下所有文件的属性
+chgrp group1 file1 改变文件的群组
+chown user1:group1 file1 改变一个文件的所有人和群组属性
+find / -perm -u+s 罗列一个系统中所有使用了SUID控制的文件
+chmod u+s /bin/file1 设置一个二进制文件的 SUID 位 - 运行该文件的用户也被赋予和所有者同样的权限
+chmod u-s /bin/file1 禁用一个二进制文件的 SUID位
+chmod g+s /home/public 设置一个目录的SGID 位 - 类似SUID ，不过这是针对目录的
+chmod g-s /home/public 禁用一个目录的 SGID 位
+chmod o+t /home/public 设置一个文件的 STIKY 位 - 只允许合法所有人删除文件
+chmod o-t /home/public 禁用一个目录的 STIKY 位 
+
+
+用户和群组
+groupadd group_name 创建一个新用户组
+groupdel group_name 删除一个用户组
+groupmod -n new_group_name old_group_name 重命名一个用户组
+useradd -c "Name Surname " -g admin -d /home/user1 -s /bin/bash user1 创建一个属于 "admin" 用户组的用户
+useradd user1 创建一个新用户
+userdel -r user1 删除一个用户 ( '-r' 排除主目录)
+usermod -c "User FTP" -g system -d /ftp/user1 -s /bin/nologin user1 修改用户属性
+passwd 修改口令
+passwd user1 修改一个用户的口令 (只允许root执行)
+chage -E 2005-12-31 user1 设置用户口令的失效期限
+pwck 检查 '/etc/passwd' 的文件格式和语法修正以及存在的用户
+grpck 检查 '/etc/passwd' 的文件格式和语法修正以及存在的群组
+newgrp group_name 登陆进一个新的群组以改变新创建文件的预设群组 
